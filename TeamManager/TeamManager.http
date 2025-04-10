@@ -1,6 +1,22 @@
 @TeamManager_HostAddress = http://localhost:5207
 
-GET {{TeamManager_HostAddress}}/weatherforecast/
+### Get all athletes
+GET {{TeamManager_HostAddress}}/api/athlete
 Accept: application/json
+
+###
+
+### Create new athlete
+
+POST {{TeamManager_HostAddress}}/api/athlete
+Content-Type: application/json
+
+{
+  "name": "Felipe Renan",
+  "age": 19,
+  "height": 1.75,
+  "weight": 93.5,
+  "position": 7
+}
 
 ###

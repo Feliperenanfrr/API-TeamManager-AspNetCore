@@ -5,16 +5,14 @@ using TeamManager.Model;
 
 namespace TeamManager.Controllers;
 
-[Route("api/Athlete")]
+[Route("api/athlete")]
 [ApiController]
-public class AthleteController : ControllerBase
+public class AthleteController(AppDbContext context) : ControllerBase
 {
-    private readonly AppDbContext  _context;
-    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Athlete>>> GetAllAthletes()
     {
-        IEnumerable<Athlete> athletes = await _context.Athletes.ToListAsync();
+        IEnumerable<Athlete> athletes = await context.Athletes.ToListAsync();
 
         return Ok(athletes);
     }
@@ -22,7 +20,7 @@ public class AthleteController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Athlete>> GetAthleteById(int id)
     {
-        var athlete = await _context.Athletes.FindAsync(id);
+        var athlete = await context.Athletes.FindAsync(id);
 
         if (athlete == null)
         {
@@ -35,21 +33,50 @@ public class AthleteController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Athlete>> PostAthlete(Athlete athlete)  
     {
-        _context.Athletes.Add(athlete);
-        await _context.SaveChangesAsync();
+        context.Athletes.Add(athlete);
+        await context.SaveChangesAsync();
         
         return CreatedAtAction(nameof(GetAthleteById), new { id = athlete.Id }, athlete);
     }
 
     [HttpPut]
-    public void Put([FromBody] Athlete athlete)
+    public async Task<IActionResult> PutAthlete(Athlete athlete, int id)
     {
+        if (id != athlete.Id)
+        {
+            return BadRequest();
+        }
         
+        context.Entry(athlete).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AthleteExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        
+        return NoContent(); 
+
     }
 
     [HttpDelete]
     public void Delete([FromBody] Athlete athlete)
     {
         
+    }
+
+    private bool AthleteExists(int id)
+    {
+        return context.Athletes.Any(e => e.Id == id);
     }
 }
