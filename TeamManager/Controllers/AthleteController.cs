@@ -39,8 +39,8 @@ public class AthleteController(AppDbContext context) : ControllerBase
         return CreatedAtAction(nameof(GetAthleteById), new { id = athlete.Id }, athlete);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> PutAthlete(Athlete athlete, int id)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutAthlete([FromBody]Athlete athlete, [FromRoute]int id)
     {
         if (id != athlete.Id)
         {
@@ -69,10 +69,20 @@ public class AthleteController(AppDbContext context) : ControllerBase
 
     }
 
-    [HttpDelete]
-    public void Delete([FromBody] Athlete athlete)
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteAthlete(int id)
     {
+        var athlete = await context.Athletes.FindAsync(id);
+
+        if (athlete == null)
+        {
+            return NotFound();
+        }
         
+        context.Athletes.Remove(athlete);
+        await context.SaveChangesAsync();
+        
+        return NoContent();
     }
 
     private bool AthleteExists(int id)
