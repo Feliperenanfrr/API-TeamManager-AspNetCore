@@ -5,8 +5,9 @@ using TeamManager.Model;
 
 namespace TeamManager.Controllers;
 
-[Route("api/athlete")]
+
 [ApiController]
+[Route("api/athlete")]
 public class AthleteController(AppDbContext context) : ControllerBase
 {
     [HttpGet]
