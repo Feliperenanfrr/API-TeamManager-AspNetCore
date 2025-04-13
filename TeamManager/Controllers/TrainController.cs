@@ -38,5 +38,39 @@ public class TrainController(AppDbContext context) : ControllerBase
         
         return CreatedAtAction(nameof(GetTrain), new { id = train.Id }, train);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Train>> PutTrain([FromRoute] int id, [FromBody] Train train)
+    {
+        if (id != train.Id)
+        {
+            return BadRequest();
+        }
+        
+        context.Entry(train).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!TrainExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        
+        return NoContent();
+    }
     
+    
+    private bool TrainExists(int id)
+    {
+        return context.Trains.Any(e => e.Id == id);
+    }
 }
