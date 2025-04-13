@@ -5,7 +5,6 @@ using TeamManager.Model;
 
 namespace TeamManager.Controllers;
 
-
 [ApiController]
 [Route("api/athlete")]
 public class AthleteController(AppDbContext context) : ControllerBase
@@ -14,7 +13,7 @@ public class AthleteController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<IEnumerable<Athlete>>> GetAllAthletes()
     {
         IEnumerable<Athlete> athletes = await context.Athletes.ToListAsync();
-
+        
         return Ok(athletes);
     }
 
@@ -50,7 +49,7 @@ public class AthleteController(AppDbContext context) : ControllerBase
         
         context.Entry(athlete).State = EntityState.Modified;
 
-        try
+         try
         {
             await context.SaveChangesAsync();
         }
