@@ -67,7 +67,22 @@ public class TrainController(AppDbContext context) : ControllerBase
         
         return NoContent();
     }
-    
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteTrain(int id)
+    {
+        var train = await context.Trains.FindAsync(id);
+
+        if (train == null)
+        {
+            return NotFound();
+        }
+        
+        context.Trains.Remove(train);
+        await context.SaveChangesAsync();
+        
+        return NoContent();
+    }
     
     private bool TrainExists(int id)
     {
