@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using TeamManager.Data;
 using TeamManager.Model;
 using Microsoft.AspNetCore.OpenApi;
+using TeamManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddControllers();
 
