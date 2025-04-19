@@ -13,8 +13,9 @@ public class TokenService
 
         var key = Encoding.ASCII.GetBytes(Configuration.PrivateKey);
         var credentials = new SigningCredentials(
-            new SymmetricSecurityKey(key)
-            , SecurityAlgorithms.HmacSha256Signature);
+            new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256Signature
+        );
 
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
@@ -23,8 +24,7 @@ public class TokenService
         };
 
         var token = handler.CreateToken(tokenDescriptor);
-        
+
         return handler.WriteToken(token);
     }
-    
 }

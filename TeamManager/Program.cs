@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using TeamManager.Data;
 using TeamManager.Model;
-using Microsoft.AspNetCore.OpenApi;
 using TeamManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,24 +13,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(opt => 
-    opt.UseInMemoryDatabase("TeamManager"));
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("TeamManager"));
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
+    options.AddPolicy(
+        "AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+        }
+    );
 });
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
-{   
-    
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }

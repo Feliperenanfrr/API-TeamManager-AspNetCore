@@ -13,7 +13,7 @@ public class TrainController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<List<Train>>> GetAllTrains()
     {
         IEnumerable<Train> trains = await context.Trains.ToListAsync();
-        
+
         return Ok(trains);
     }
 
@@ -26,7 +26,7 @@ public class TrainController(AppDbContext context) : ControllerBase
         {
             return NotFound();
         }
-        
+
         return Ok(train);
     }
 
@@ -35,7 +35,7 @@ public class TrainController(AppDbContext context) : ControllerBase
     {
         context.Trains.Add(train);
         await context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetTrain), new { id = train.Id }, train);
     }
 
@@ -46,7 +46,7 @@ public class TrainController(AppDbContext context) : ControllerBase
         {
             return BadRequest();
         }
-        
+
         context.Entry(train).State = EntityState.Modified;
 
         try
@@ -64,7 +64,7 @@ public class TrainController(AppDbContext context) : ControllerBase
                 throw;
             }
         }
-        
+
         return NoContent();
     }
 
@@ -77,13 +77,13 @@ public class TrainController(AppDbContext context) : ControllerBase
         {
             return NotFound();
         }
-        
+
         context.Trains.Remove(train);
         await context.SaveChangesAsync();
-        
+
         return NoContent();
     }
-    
+
     private bool TrainExists(int id)
     {
         return context.Trains.Any(e => e.Id == id);

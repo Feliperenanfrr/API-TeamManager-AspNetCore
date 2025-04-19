@@ -13,7 +13,7 @@ public class AthleteController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<IEnumerable<Athlete>>> GetAllAthletes()
     {
         IEnumerable<Athlete> athletes = await context.Athletes.ToListAsync();
-        
+
         return Ok(athletes);
     }
 
@@ -26,30 +26,30 @@ public class AthleteController(AppDbContext context) : ControllerBase
         {
             return NotFound();
         }
-        
+
         return athlete;
     }
-    
+
     [HttpPost]
-    public async Task<ActionResult<Athlete>> PostAthlete(Athlete athlete)  
+    public async Task<ActionResult<Athlete>> PostAthlete(Athlete athlete)
     {
         context.Athletes.Add(athlete);
         await context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetAthleteById), new { id = athlete.Id }, athlete);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutAthlete([FromBody]Athlete athlete, [FromRoute]int id)
+    public async Task<IActionResult> PutAthlete([FromBody] Athlete athlete, [FromRoute] int id)
     {
         if (id != athlete.Id)
         {
             return BadRequest();
         }
-        
+
         context.Entry(athlete).State = EntityState.Modified;
 
-         try
+        try
         {
             await context.SaveChangesAsync();
         }
@@ -64,9 +64,8 @@ public class AthleteController(AppDbContext context) : ControllerBase
                 throw;
             }
         }
-        
-        return NoContent(); 
 
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
@@ -78,10 +77,10 @@ public class AthleteController(AppDbContext context) : ControllerBase
         {
             return NotFound();
         }
-        
+
         context.Athletes.Remove(athlete);
         await context.SaveChangesAsync();
-        
+
         return NoContent();
     }
 

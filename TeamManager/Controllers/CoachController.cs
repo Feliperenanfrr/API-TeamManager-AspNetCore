@@ -13,7 +13,7 @@ public class CoachController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<IEnumerable<Coach>>> GetAllCoaches()
     {
         IEnumerable<Coach> coaches = await context.Coaches.ToListAsync();
-        
+
         return Ok(coaches);
     }
 
@@ -34,7 +34,7 @@ public class CoachController(AppDbContext context) : ControllerBase
     {
         context.Coaches.Add(coach);
         await context.SaveChangesAsync();
-        
+
         return CreatedAtAction(nameof(GetCoachById), new { id = coach.Id }, coach);
     }
 
@@ -50,7 +50,7 @@ public class CoachController(AppDbContext context) : ControllerBase
         {
             context.Entry(coach).State = EntityState.Modified;
         }
-        catch(DbUpdateConcurrencyException)
+        catch (DbUpdateConcurrencyException)
         {
             if (!CoachExists(id))
             {
@@ -77,8 +77,8 @@ public class CoachController(AppDbContext context) : ControllerBase
 
         context.Coaches.Remove(coach);
         await context.SaveChangesAsync();
-        
-        return NoContent(); 
+
+        return NoContent();
     }
 
     private bool CoachExists(int id)
