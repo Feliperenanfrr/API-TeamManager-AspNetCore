@@ -31,7 +31,8 @@ public class TokenService
             Issuer = _jwtConfig.Issuer,
             Audience = _jwtConfig.Audience,
             SigningCredentials = credentials,
-            Expires = DateTime.Now.AddHours(2),
+            NotBefore = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddHours(2),
         };
 
         var token = handler.CreateToken(tokenDescriptor);
