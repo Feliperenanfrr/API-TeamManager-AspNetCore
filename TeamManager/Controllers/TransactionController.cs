@@ -77,7 +77,7 @@ public class TransactionController(AppDbContext context):  ControllerBase
             return NotFound();
         }
         
-        context.Trains.Remove(transaction);
+        context.Transactions.Remove(transaction);
         await context.SaveChangesAsync();
         
         return NoContent();
