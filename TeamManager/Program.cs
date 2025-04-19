@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
+using TeamManager.Configurations;
 using TeamManager.Data;
 using TeamManager.Model;
 using TeamManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddControllers();
