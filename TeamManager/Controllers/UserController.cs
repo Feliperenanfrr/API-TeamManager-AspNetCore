@@ -6,6 +6,8 @@ using TeamManager.Services;
 
 namespace TeamManager.Controllers;
 
+[ApiController]
+[Route("api/user")]
 public class UserController : ControllerBase
 {
     private readonly AppDbContext  _dbContext;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TeamManager.Data;
 using TeamManager.Model;
@@ -6,7 +7,7 @@ using TeamManager.Model;
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/Transaction")]
+[Route("api/transaction")]
 public class TransactionController(AppDbContext context) : ControllerBase
 {
     [HttpGet]
