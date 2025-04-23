@@ -16,7 +16,8 @@ var jwtConfig = builder.Configuration.GetSection("Jwt").Get<JwtConfig>();
 if (jwtConfig == null)
 {
     throw new InvalidOperationException("JWT configuration is not properly set in appsettings.json  ");
-} 
+}
+
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddTransient<TokenService>();
 
@@ -70,6 +71,14 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("TeamManager"));
+
+builder.Services.AddScoped<ICachingService, CachingService>();
+
+builder.Services.AddStackExchangeRedisCache(o =>
+{
+    o.InstanceName = "TeamManager";
+    o.Configuration = "localhost:6379";
+});
 
 builder.Services.AddCors(options =>
 {

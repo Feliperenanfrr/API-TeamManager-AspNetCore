@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TeamManager.Data;
 using TeamManager.Model;
@@ -7,6 +8,7 @@ namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/coach")]
+[Authorize]
 public class CoachController(AppDbContext context) : ControllerBase
 {
     [HttpGet]

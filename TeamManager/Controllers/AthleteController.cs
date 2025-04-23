@@ -8,6 +8,7 @@ namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/athlete")]
+[Authorize]
 public class AthleteController(AppDbContext context) : ControllerBase
 {
     [HttpGet]
