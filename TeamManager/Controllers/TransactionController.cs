@@ -8,7 +8,6 @@ namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/transaction")]
-[Authorize]
 public class TransactionController(AppDbContext context) : ControllerBase
 {
     [HttpGet]

@@ -8,7 +8,6 @@ namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/train")]
-[Authorize]
 public class TrainController(AppDbContext context) : ControllerBase
 {
     [HttpGet]

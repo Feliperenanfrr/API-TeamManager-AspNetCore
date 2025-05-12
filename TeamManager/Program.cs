@@ -11,7 +11,7 @@ using TeamManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtConfig = builder.Configuration.GetSection("Jwt").Get<JwtConfig>();
+/*var jwtConfig = builder.Configuration.GetSection("Jwt").Get<JwtConfig>();
 
 if (jwtConfig == null)
 {
@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtConfig.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
     };
-});
+});*/
 
 builder.Services.AddControllers();
 
@@ -72,8 +72,6 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("TeamManager"));
 
-builder.Services.AddScoped<ICachingService, CachingService>();
-
 builder.Services.AddStackExchangeRedisCache(o =>
 {
     o.InstanceName = "TeamManager";
@@ -106,8 +104,8 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+/*app.UseAuthentication();
+app.UseAuthorization();*/
 
 app.MapControllers();
 
