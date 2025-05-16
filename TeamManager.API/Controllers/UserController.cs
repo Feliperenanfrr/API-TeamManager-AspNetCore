@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TeamManager.Data;
-using TeamManager.Model;
-using TeamManager.Services;
+using TeamManager.Application.Services;
+using TeamManager.Domain.Model;
+using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 
@@ -43,8 +44,10 @@ public class UserController : ControllerBase
             return Unauthorized("Credenciais inválidas!");
         }
         
-        var token = _tokenService.Generate(loginUser);
+        /*var token = _tokenService.Generate(loginUser);
         
-        return Ok(new  { token = token });
+        return Ok(new  { token = token });*/
+
+        return Ok();
     }
 }

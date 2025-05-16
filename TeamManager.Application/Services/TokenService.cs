@@ -1,15 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using TeamManager.Configurations;
-using TeamManager.Model;
+﻿using System.Text;
 
-namespace TeamManager.Services;
+namespace TeamManager.Application.Services;
 
 public class TokenService
 {
-    private readonly JwtConfig _jwtConfig;
+    /*private readonly JwtConfig _jwtConfig;
 
     public TokenService(IOptions<JwtConfig> jwtConfig)
     {
@@ -38,5 +33,5 @@ public class TokenService
         var token = handler.CreateToken(tokenDescriptor);
 
         return handler.WriteToken(token);
-    }
+    }*/
 }

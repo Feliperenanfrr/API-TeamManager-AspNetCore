@@ -1,4 +1,4 @@
-﻿namespace TeamManager.Model;
+﻿namespace TeamManager.Domain.Model;
 
 public class User
 {

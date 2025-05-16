@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TeamManager.Configurations;
-using TeamManager.Data;
-using TeamManager.Model;
-using TeamManager.Services;
+using TeamManager.Infrastructure.Data;
+using TeamManager.Domain.Model;
+using TeamManager.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,11 +70,11 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("TeamManager"));
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("TeamManager.API"));
 
 builder.Services.AddStackExchangeRedisCache(o =>
 {
-    o.InstanceName = "TeamManager";
+    o.InstanceName = "TeamManager.API";
     o.Configuration = "localhost:6379";
 });
 

@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TeamManager.Data;
-using TeamManager.Model;
+using TeamManager.Domain.Model;
+using TeamManager.Infrastructure.Data;
+using DomainTransaction = TeamManager.Domain.Model.Transaction;
 
 namespace TeamManager.Controllers;
 
@@ -30,7 +31,7 @@ public class TransactionController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
+    public async Task<ActionResult<DomainTransaction>> PostTransaction(DomainTransaction transaction)
     {
         context.Transactions.Add(transaction);
         await context.SaveChangesAsync();

@@ -1,6 +1,6 @@
-﻿using TeamManager.Enum;
+﻿using TeamManager.Domain.Enum;
 
-namespace TeamManager.Model;
+namespace TeamManager.Domain.Model;
 
 public class Athlete
 {

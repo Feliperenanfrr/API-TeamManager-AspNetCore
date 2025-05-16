@@ -1,4 +1,4 @@
-﻿namespace TeamManager.Enum;
+﻿namespace TeamManager.Domain.Enum;
 
 public enum Positions
 {

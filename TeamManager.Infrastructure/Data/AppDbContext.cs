@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TeamManager.Model;
+using TeamManager.Domain.Model;
+using Transaction = System.Transactions.Transaction;
 
-namespace TeamManager.Data;
+namespace TeamManager.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
@@ -11,6 +12,6 @@ public class AppDbContext : DbContext
     public DbSet<Athlete> Athletes { get; set; }
     public DbSet<Coach> Coaches { get; set; }
     public DbSet<Train> Trains { get; set; }
-    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<Domain.Model.Transaction> Transactions { get; set; }
     public DbSet<User> Users { get; set; }
 }

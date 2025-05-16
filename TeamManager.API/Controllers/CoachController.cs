@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TeamManager.Data;
-using TeamManager.Model;
+using TeamManager.Domain.Model;
+using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 

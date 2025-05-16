@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>TeamManager</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,13 @@
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TeamManager.Application\TeamManager.Application.csproj" />
+      <ProjectReference Include="..\TeamManager.Domain\TeamManager.Domain.csproj" />
+      <ProjectReference Include="..\TeamManager.Infrastructure\TeamManager.Infrastructure.csproj" />
+      <ProjectReference Include="..\TeamManager.Test\TeamManager.Test.csproj" />
     </ItemGroup>
 
 </Project>

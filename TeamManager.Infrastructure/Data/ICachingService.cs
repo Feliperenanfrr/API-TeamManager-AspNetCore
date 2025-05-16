@@ -1,4 +1,4 @@
-﻿namespace TeamManager.Data;
+﻿namespace TeamManager.Infrastructure.Data;
 
 public interface ICachingService
 {
