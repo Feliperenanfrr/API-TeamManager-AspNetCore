@@ -1,6 +1,6 @@
 ﻿namespace TeamManager.Domain.Model;
 
-public class Transaction
+public class FinancialTransaction
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }

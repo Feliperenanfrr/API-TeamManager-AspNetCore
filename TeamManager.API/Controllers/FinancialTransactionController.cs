@@ -3,25 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TeamManager.Domain.Model;
 using TeamManager.Infrastructure.Data;
-using DomainTransaction = TeamManager.Domain.Model.Transaction;
 
 namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/transaction")]
-public class TransactionController(AppDbContext context) : ControllerBase
+public class FinancialTransactionController(AppDbContext context) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<Transaction>>> GetAllTransactions()
+    public async Task<ActionResult<List<FinancialTransaction>>> GetAllTransactions()
     {
-        IEnumerable<Transaction> transactions = await context.Transactions.ToListAsync();
+        IEnumerable<FinancialTransaction> transactions = await context.FinancialTransactions.ToListAsync();
         return Ok(transactions);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Transaction>> GetTransaction(int id)
+    public async Task<ActionResult<FinancialTransaction>> GetTransaction(int id)
     {
-        var transaction = await context.Transactions.FindAsync(id);
+        var transaction = await context.FinancialTransactions.FindAsync(id);
 
         if (transaction == null)
         {
@@ -31,26 +30,26 @@ public class TransactionController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DomainTransaction>> PostTransaction(DomainTransaction transaction)
+    public async Task<ActionResult<FinancialTransaction>> PostTransaction(FinancialTransaction financialTransaction)
     {
-        context.Transactions.Add(transaction);
+        context.FinancialTransactions.Add(financialTransaction);
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+        return CreatedAtAction(nameof(GetTransaction), new { id = financialTransaction.Id }, financialTransaction);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<Train>> PutTransaction(
         [FromRoute] int id,
-        [FromBody] Transaction transaction
+        [FromBody] FinancialTransaction financialTransaction
     )
     {
-        if (id != transaction.Id)
+        if (id != financialTransaction.Id)
         {
             return BadRequest();
         }
 
-        context.Entry(transaction).State = EntityState.Modified;
+        context.Entry(financialTransaction).State = EntityState.Modified;
 
         try
         {
@@ -74,14 +73,14 @@ public class TransactionController(AppDbContext context) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTransaction(int id)
     {
-        var transaction = await context.Transactions.FindAsync(id);
+        var transaction = await context.FinancialTransactions.FindAsync(id);
 
         if (transaction == null)
         {
             return NotFound();
         }
 
-        context.Transactions.Remove(transaction);
+        context.FinancialTransactions.Remove(transaction);
         await context.SaveChangesAsync();
 
         return NoContent();
@@ -89,6 +88,6 @@ public class TransactionController(AppDbContext context) : ControllerBase
 
     private bool TransactionExists(int id)
     {
-        return context.Transactions.Any(e => e.Id == id);
+        return context.FinancialTransactions.Any(e => e.Id == id);
     }
 }
