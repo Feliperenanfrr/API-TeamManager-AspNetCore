@@ -1,6 +1,8 @@
-﻿namespace TeamManager.Domain.Model;
+﻿using TeamManager.Domain.Common;
 
-public class FinancialTransaction
+namespace TeamManager.Domain.Model;
+
+public class FinancialTransaction : BaseEntity
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
