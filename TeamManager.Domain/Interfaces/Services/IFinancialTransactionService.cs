@@ -11,7 +11,7 @@ public interface IFinancialTransactionService
 
     Task<FinancialTransactionResponseDto> CreateAsync(FinancialTransactionCreateDto createDto);
 
-    Task<FinancialTransactionResponseDto?> UpdateAsync(FinancialTransactionUpdateDto updateDto);
+    Task<FinancialTransactionResponseDto?> UpdateAsync(int id, FinancialTransactionUpdateDto updateDto);
 
     Task<bool> DeleteAsync(int id);
 
