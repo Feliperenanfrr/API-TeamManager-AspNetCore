@@ -1,92 +1,146 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TeamManager.Domain.Common;
+using TeamManager.Domain.DTOs;
+using TeamManager.Domain.Enum;
+using TeamManager.Domain.Exceptions;
+using TeamManager.Domain.Interfaces.Services;
 using TeamManager.Domain.Model;
 using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/athlete")]
-public class AthleteController(AppDbContext context) : ControllerBase
+[Route("api/[controller]")]
+[Produces("application/json")]
+public class AthleteController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Athlete>>> GetAllAthletes()
+    private readonly IAthleteService _athleteService;
+
+    public AthleteController(IAthleteService athleteService)
     {
-        IEnumerable<Athlete> athletes = await context.Athletes.ToListAsync();
+        _athleteService = athleteService;
+    }
+
+    [HttpGet]
+    [ProducesResponseType<PaginationResponse<AthleteResponseDto>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<PaginationResponse<AthleteResponseDto>>> GetAllAthletes(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = false
+    )
+    {
+        var request = new PaginationRequest(page, pageSize, search, sortBy, sortDescending);
+        var athletes = await _athleteService.GetAllAthletesAsync(request);
 
         return Ok(athletes);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Athlete>> GetAthleteById(int id)
+    [HttpGet("{id:int}")]
+    [ProducesResponseType<AthleteResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AthleteResponseDto>> GetAthleteById(int id)
     {
-        var athlete = await context.Athletes.FindAsync(id);
+        var athlete = await _athleteService.GetAthleteByIdAsync(id);
 
         if (athlete == null)
-        {
-            return NotFound();
-        }
+            return NotFound(new { message = $"Atleta com ID {id} não encontrado" });
 
         return athlete;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Athlete>> PostAthlete(Athlete athlete)
+    [HttpGet("by-position/{position:int}")]
+    [ProducesResponseType<IEnumerable<AthleteResponseDto>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<AthleteResponseDto>>> GetAthletesByPosition(
+        Positions position
+    )
     {
-        context.Athletes.Add(athlete);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetAthleteById), new { id = athlete.Id }, athlete);
+        var athletes = await _athleteService.GetAthletesByPositionAsync(position);
+        return Ok(athletes);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutAthlete([FromBody] Athlete athlete, [FromRoute] int id)
+    [HttpGet("count")]
+    [ProducesResponseType<int>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<int>> GetAthleteCount()
     {
-        if (id != athlete.Id)
-        {
-            return BadRequest();
-        }
+        var count = await _athleteService.GetAthletesCountAsync();
+        return Ok(count);
+    }
 
-        context.Entry(athlete).State = EntityState.Modified;
+    [HttpPost]
+    [ProducesResponseType<AthleteResponseDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AthleteResponseDto>> CreateAthlete(
+        [FromBody] AthleteCreateDto athleteDto
+    )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         try
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AthleteExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
+            var createdAthlete = await _athleteService.CreateAthleteAsync(athleteDto);
 
-        return NoContent();
+            return CreatedAtAction(
+                nameof(GetAthleteById),
+                new { id = createdAthlete.Id },
+                createdAthlete
+            );
+        }
+        catch (BusinessException e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
     }
 
-    [HttpDelete("{id}")]
+    [HttpPut("{id:int}")]
+    [ProducesResponseType<AthleteResponseDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AthleteResponseDto>> UpdateAthlete(
+        int id,
+        [FromBody] AthleteUpdateDto athleteDto
+    )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (id != athleteDto.Id)
+            return BadRequest(
+                new { message = "ID da rota não confere com o ID do corpo da requisição" }
+            );
+
+        try
+        {
+            var updatedAthlete = await _athleteService.UpdateAthleteAsync(id, athleteDto);
+            return Ok(updatedAthlete);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new { message = e.Message });
+        }
+        catch (BusinessException e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteAthlete(int id)
     {
-        var athlete = await context.Athletes.FindAsync(id);
-
-        if (athlete == null)
+        try
         {
-            return NotFound();
+            await _athleteService.DeleteAthleteAsync(id);
+            return NoContent();
         }
-
-        context.Athletes.Remove(athlete);
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private bool AthleteExists(int id)
-    {
-        return context.Athletes.Any(e => e.Id == id);
+        catch (NotFoundException e)
+        {
+            return NotFound(new { message = e.Message });
+        }
     }
 }
