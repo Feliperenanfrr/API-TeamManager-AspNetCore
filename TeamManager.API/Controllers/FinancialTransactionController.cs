@@ -13,7 +13,8 @@ public class FinancialTransactionController(AppDbContext context) : ControllerBa
     [HttpGet]
     public async Task<ActionResult<List<FinancialTransaction>>> GetAllTransactions()
     {
-        IEnumerable<FinancialTransaction> transactions = await context.FinancialTransactions.ToListAsync();
+        IEnumerable<FinancialTransaction> transactions =
+            await context.FinancialTransactions.ToListAsync();
         return Ok(transactions);
     }
 
@@ -30,12 +31,18 @@ public class FinancialTransactionController(AppDbContext context) : ControllerBa
     }
 
     [HttpPost]
-    public async Task<ActionResult<FinancialTransaction>> PostTransaction(FinancialTransaction financialTransaction)
+    public async Task<ActionResult<FinancialTransaction>> PostTransaction(
+        FinancialTransaction financialTransaction
+    )
     {
         context.FinancialTransactions.Add(financialTransaction);
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetTransaction), new { id = financialTransaction.Id }, financialTransaction);
+        return CreatedAtAction(
+            nameof(GetTransaction),
+            new { id = financialTransaction.Id },
+            financialTransaction
+        );
     }
 
     [HttpPut("{id}")]

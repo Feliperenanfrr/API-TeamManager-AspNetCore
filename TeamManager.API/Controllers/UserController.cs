@@ -11,7 +11,7 @@ namespace TeamManager.Controllers;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly AppDbContext  _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly TokenService _tokenService;
 
     public UserController(AppDbContext dbContext, TokenService tokenService)
@@ -28,10 +28,10 @@ public class UserController : ControllerBase
         {
             return BadRequest("Email já cadastrado!");
         }
-        
+
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
-        
+
         return Ok("Usuário registrado com sucesso!");
     }
 
@@ -43,7 +43,7 @@ public class UserController : ControllerBase
         {
             return Unauthorized("Credenciais inválidas!");
         }
-        
+
         /*var token = _tokenService.Generate(loginUser);
         
         return Ok(new  { token = token });*/
