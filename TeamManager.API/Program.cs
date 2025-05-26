@@ -1,45 +1,23 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TeamManager.Application.Services;
-using TeamManager.Configurations;
-using TeamManager.Domain.Model;
+using TeamManager.Domain.Interfaces.Repoitories;
+using TeamManager.Domain.Interfaces.Services;
 using TeamManager.Infrastructure.Data;
+using TeamManager.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*var jwtConfig = builder.Configuration.GetSection("Jwt").Get<JwtConfig>();
-
-if (jwtConfig == null)
-{
-    throw new InvalidOperationException("JWT configuration is not properly set in appsettings.json  ");
-}
-
-builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
-builder.Services.AddTransient<TokenService>();
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtConfig.Issuer,
-        ValidAudience = jwtConfig.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
-    };
-});*/
-
 builder.Services.AddControllers();
+
+//Repositories
+builder.Services.AddScoped<IAthleteRepository, AthleteRepository>();
+
+// Services
+builder.Services.AddScoped<IAthleteService, AthleteService>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
