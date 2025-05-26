@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using TeamManager.Configurations;
-using TeamManager.Infrastructure.Data;
-using TeamManager.Domain.Model;
 using TeamManager.Application.Services;
+using TeamManager.Configurations;
+using TeamManager.Domain.Model;
+using TeamManager.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,29 +44,35 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-    
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
+            Description =
+                "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
         }
-    });
+    );
+
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                Array.Empty<string>()
+            },
+        }
+    );
 });
 
 builder.Services.AddOpenApi();
@@ -84,7 +90,8 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000")
+            policy
+                .WithOrigins("http://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
