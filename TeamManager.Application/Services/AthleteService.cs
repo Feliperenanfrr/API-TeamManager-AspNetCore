@@ -13,7 +13,6 @@ public class AthleteService : IAthleteService
 {
     private readonly IAthleteRepository _athleteRepository;
     private readonly IMapper _mapper;
-    private IAthleteService _athleteServiceImplementation;
 
     public AthleteService(IAthleteRepository athleteRepository, IMapper mapper)
     {
