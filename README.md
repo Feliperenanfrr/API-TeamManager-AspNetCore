@@ -1,78 +1,104 @@
 # 🏈 Team Manager API – Sistema de Gestão Esportiva
 
-**Descrição:**
-A **Team Manager API** é uma aplicação desenvolvida em .NET com arquitetura inspirada na **Clean Architecture**, voltada para a **gestão de um time amador de futebol americano e flag football**. Este projeto foi criado de forma voluntária e visa oferecer uma solução gratutia e escalável para o gerenciamento do time.
----
+[![.NET](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
+[![Entity Framework](https://img.shields.io/badge/Entity%20Framework-Core-green.svg)](https://docs.microsoft.com/en-us/ef/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 📌 Funcionalidades
+## 📋 Sobre o Projeto
 
-* Cadastro de atletas
-* Gerenciamento de posições e times
-* Controle de treinos e presenças
-* Registro de estatísticas por jogador
-* Sistema de autenticação (JWT)
-* Arquitetura desacoplada (Clean Architecture)
-* Pronto para deploy em cloud (AWS)
+A **Team Manager API** é uma aplicação robusta desenvolvida em **.NET 8** seguindo os princípios da **Clean Architecture**, especialmente projetada para a **gestão completa de times amadores de futebol americano e flag football**. 
+
+Este projeto nasceu como uma **contribuição voluntária e gratuita** para auxiliar equipes amadoras na digitalização de seus processos de gestão, oferecendo uma solução escalável e profissional.
 
 ---
 
-## 🧱 Arquitetura
+## ✨ Funcionalidades Principais
 
-> O projeto segue os princípios da **Clean Architecture**, com separação clara de responsabilidades entre as camadas:
+- 👥 **Gestão de Atletas**: Cadastro completo com informações pessoais e posições
+- 🏃‍♂️ **Gerenciamento de Treinos**: Controle de presenças e planejamento
+- 📊 **Estatísticas Avançadas**: Registro e análise de performance por jogador
+- 👨‍💼 **Gestão de Comissão Técnica**: Controle de coaches e staff
+- 💰 **Controle Financeiro**: Gestão de transações e mensalidades
+- 🔐 **Autenticação Segura**: Sistema completo com JWT
+- 📱 **API RESTful**: Endpoints organizados e documentados
+- 🎯 **Arquitetura Limpa**: Código desacoplado e testável
+
+---
+
+## 🏗️ Arquitetura
+
+O projeto implementa **Clean Architecture** com clara separação de responsabilidades:
 
 ```
-/Domain         -> Entidades e interfaces (núcleo da regra de negócio)
-├── Athlete.cs
-├── ITeamRepository.cs
-
-/Application    -> Casos de uso (Use Cases)
-├── GetAllAthletes.cs
-├── RegisterAthlete.cs
-
-/Infrastructure -> Persistência de dados (EF Core, DbContext, Repos)
-├── AppDbContext.cs
-├── AthleteRepository.cs
-
-/API            -> Controladores HTTP
-├── AthleteController.cs
+📁 TeamManager/
+├── 🎯 TeamManager.API/              # Camada de Apresentação (Controllers, Middleware)
+├── 💼 TeamManager.Application/      # Casos de Uso e Lógica de Aplicação
+├── 🏛️ TeamManager.Domain/          # Entidades, Regras de Negócio e Interfaces
+├── 🔧 TeamManager.Infrastructure/   # Persistência, Repositórios e Serviços Externos
+└── 🧪 TeamManager.Test/            # Testes Unitários e de Integração
 ```
 
----
-
-## 🥪 Tecnologias Utilizadas
-
-* .NET 8
-* Entity Framework Core
-* PostgreSQL
-* Swagger para documentação da API
-* JWT para autenticação segura
+### Benefícios da Arquitetura:
+- **Testabilidade**: Cada camada pode ser testada independentemente
+- **Manutenibilidade**: Código organizado e fácil de evoluir  
+- **Flexibilidade**: Fácil troca de tecnologias (banco, frameworks, etc.)
+- **Escalabilidade**: Preparado para crescimento e novas funcionalidades
 
 ---
 
-## 📚 Documentação da API
+## 🛠️ Stack Tecnológica
 
-* Documentação gerada com **Swagger** (acesso via `/swagger`)
-* Rotas RESTful organizadas por entidade
-* Tratamento de erros e validações de entrada
+### Backend
+- **.NET 8** - Framework principal
+- **Entity Framework Core** - ORM para acesso a dados
+- **PostgreSQL** - Banco de dados relacional
+- **JWT** - Autenticação e autorização
 
----
+### Documentação & Testes
+- **Swagger/OpenAPI** - Documentação interativa da API
+- **xUnit** - Framework de testes unitários
 
-## 🚀 Objetivo do Projeto
-
-Este projeto foi criado como **contribuição gratuita para um time amador**, com o intuito de:
-
-* Gerenciar estatísticas dos atletas durante a temporada para auxiliar na tomada de decisão da comissão técnica
-* Ajudar na organização de treinos e escalações
-* Controlar presença e desempenho dos atletas
-* Incentivar a digitalização do esporte amador
-* **Demonstrar minha capacidade técnica** com .NET e arquitetura limpa
+### Deploy & Cloud
+- **Docker** - Containerização
+- **AWS** - Infraestrutura em nuvem (preparado)
 
 ---
 
-## 💼 Para o Portfólio
+## 🎯 Objetivos do Projeto
 
-* Demonstra habilidades em **backend moderno com boas práticas**
-* Projeto **real e funcional**, pronto para escalar
-* Código limpo, reutilizável e testável
-* Pronto para evoluir para um **SaaS completo**
+### Para a Comunidade
+- 🏈 **Digitalizar o esporte amador** brasileiro
+- 📈 **Profissionalizar a gestão** de equipes amadoras
+- 🆓 **Oferecer solução gratuita** para times com recursos limitados
+- 📊 **Auxiliar decisões técnicas** com dados estatísticos
 
+### Para o Portfólio
+- 💻 **Demonstrar expertise** em .NET e Clean Architecture
+- 🏗️ **Mostrar capacidade** de criar soluções escaláveis
+- 🧪 **Evidenciar boas práticas** de desenvolvimento
+- 🚀 **Preparar base** para evolução para SaaS
+
+---
+
+## 🔄 Próximas Funcionalidades
+
+- [ ] Dashboard com métricas em tempo real
+- [ ] Integração com calendário (Google Calendar)
+- [ ] Notificações push via WhatsApp/SMS
+- [ ] Relatórios avançados em PDF
+- [ ] App mobile (React Native)
+- [ ] Sistema de pagamentos online
+
+---
+
+## 📞 Contato
+
+**Felipe Renan** - Desenvolvedor Full Stack
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/felipe-renan/)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:felipeferreira3146@gmail.com)
+
+---
+
+⭐ **Se este projeto foi útil para você, considere dar uma estrela!** ⭐
