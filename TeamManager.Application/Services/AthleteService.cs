@@ -20,10 +20,12 @@ public class AthleteService : IAthleteService
         _mapper = mapper;
     }
 
-    public async Task<PaginationResponse<AthleteResponseDto>> GetAllAthletesAsync(PaginationRequest paginationRequest)
+    public async Task<PaginationResponse<AthleteResponseDto>> GetAllAthletesAsync(
+        PaginationRequest paginationRequest
+    )
     {
         var athletesPage = await _athleteRepository.GetAllAsync(paginationRequest);
-        
+
         var athleteDto = _mapper.Map<IEnumerable<AthleteResponseDto>>(athletesPage.Data);
 
         return new PaginationResponse<AthleteResponseDto>(
@@ -31,7 +33,8 @@ public class AthleteService : IAthleteService
             athletesPage.TotalRecords,
             athletesPage.Page,
             athletesPage.PageSize,
-            athletesPage.TotalPages);
+            athletesPage.TotalPages
+        );
     }
 
     public async Task<AthleteResponseDto?> GetAthleteByIdAsync(int id)
@@ -43,39 +46,41 @@ public class AthleteService : IAthleteService
     public async Task<AthleteResponseDto> CreateAthleteAsync(AthleteCreateDto athleteDto)
     {
         ValidateAthleteAge(athleteDto.BirthDay);
-        
+
         var athlete = _mapper.Map<Athlete>(athleteDto);
         var createdAthlete = await _athleteRepository.CreateAsync(athlete);
-        
+
         return _mapper.Map<AthleteResponseDto>(createdAthlete);
     }
 
     public async Task<AthleteResponseDto> UpdateAthleteAsync(int id, AthleteUpdateDto athleteDto)
     {
         var existingAthlete = await _athleteRepository.GetByIdAsync(id);
-        
-        if  (existingAthlete == null)
+
+        if (existingAthlete == null)
             throw new NotFoundException($"Athlete {id} not found");
-        
+
         ValidateAthleteAge(athleteDto.BirthDay);
-        
+
         _mapper.Map(athleteDto, existingAthlete);
         var updatedAthlete = await _athleteRepository.UpdateAsync(existingAthlete);
-        
+
         return _mapper.Map<AthleteResponseDto>(updatedAthlete);
     }
 
     public async Task<bool> DeleteAthleteAsync(int id)
     {
         var exists = await _athleteRepository.ExistsAsync(id);
-        
+
         if (!exists)
             throw new NotFoundException($"Athlete {id} not found");
-        
+
         return await _athleteRepository.DeleteAsync(id);
     }
 
-    public async Task<IEnumerable<AthleteResponseDto>> GetAthletesByPositionAsync(Positions position)
+    public async Task<IEnumerable<AthleteResponseDto>> GetAthletesByPositionAsync(
+        Positions position
+    )
     {
         var athletes = await _athleteRepository.GetByPositionsAsync(position);
         return _mapper.Map<IEnumerable<AthleteResponseDto>>(athletes);
@@ -85,14 +90,14 @@ public class AthleteService : IAthleteService
     {
         return await _athleteRepository.GetCountAsync();
     }
-    
+
     private static void ValidateAthleteAge(DateTime birthDay)
     {
         var age = DateTime.Now.Year - birthDay.Year;
-        
+
         if (age < 16)
             throw new BusinessException("Atleta deve ter pelo menos 16 anos");
-            
+
         if (age > 55)
             throw new BusinessException("Atleta não pode ter mais de 55 anos");
     }

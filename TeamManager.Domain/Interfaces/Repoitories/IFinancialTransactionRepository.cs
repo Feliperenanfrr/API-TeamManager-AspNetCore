@@ -18,6 +18,8 @@ public interface IFinancialTransactionRepository
 
     Task<IEnumerable<FinancialTransaction>> GetByTypeAsync(bool typeTransaction);
 
-    Task<IEnumerable<FinancialTransaction>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
-
+    Task<IEnumerable<FinancialTransaction>> GetByDateRangeAsync(
+        DateTime startDate,
+        DateTime endDate
+    );
 }

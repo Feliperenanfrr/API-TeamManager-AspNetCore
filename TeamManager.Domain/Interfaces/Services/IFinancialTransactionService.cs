@@ -11,13 +11,19 @@ public interface IFinancialTransactionService
 
     Task<FinancialTransactionResponseDto> CreateAsync(FinancialTransactionCreateDto createDto);
 
-    Task<FinancialTransactionResponseDto?> UpdateAsync(int id, FinancialTransactionUpdateDto updateDto);
+    Task<FinancialTransactionResponseDto?> UpdateAsync(
+        int id,
+        FinancialTransactionUpdateDto updateDto
+    );
 
     Task<bool> DeleteAsync(int id);
 
     Task<IEnumerable<FinancialTransactionResponseDto>> GetByTypeAsync(bool typeTransaction);
 
-    Task<IEnumerable<FinancialTransactionResponseDto>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<FinancialTransactionResponseDto>> GetByDateRangeAsync(
+        DateTime startDate,
+        DateTime endDate
+    );
 
     Task<double> GetBalanceAsync();
 
