@@ -10,7 +10,8 @@ namespace TeamManager.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IUserService  _userService;
+    private readonly IUserService _userService;
+
     public UserController(IUserService userService)
     {
         _userService = userService;
@@ -27,7 +28,10 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new {message = "Erro interno do servidor", detail = ex.Message});
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", detail = ex.Message }
+            );
         }
     }
 
@@ -42,7 +46,10 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new {message = "Erro interno do servidor", detail = ex.Message});
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", detail = ex.Message }
+            );
         }
     }
 
@@ -56,15 +63,18 @@ public class UserController : ControllerBase
             var user = await _userService.GetByIdAsync(id);
             if (user == null)
                 return NotFound(new { message = $"Usuário com ID {id} não encontrado" });
-            
+
             return Ok(user);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new  {message = "Erro interno do servidor", detail = ex.Message});
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", detail = ex.Message }
+            );
         }
     }
-    
+
     [HttpGet("email/{email}")]
     [ProducesResponseType(typeof(UserResponseDto), 200)]
     [ProducesResponseType(404)]
@@ -80,10 +90,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpPost]
     [ProducesResponseType(typeof(UserResponseDto), 201)]
     [ProducesResponseType(400)]
@@ -108,16 +121,22 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(UserResponseDto), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(409)]
-    public async Task<ActionResult<UserResponseDto>> UpdateUser(int id, [FromBody] UserUpdateDto updateDto)
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(
+        int id,
+        [FromBody] UserUpdateDto updateDto
+    )
     {
         try
         {
@@ -144,10 +163,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpDelete("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -158,7 +180,7 @@ public class UserController : ControllerBase
             var result = await _userService.DeleteAsync(id);
             if (!result)
                 return NotFound(new { message = $"Usuário com ID {id} não encontrado" });
-            
+
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -167,10 +189,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpPatch("{id:int}/deactivate")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -181,7 +206,7 @@ public class UserController : ControllerBase
             var result = await _userService.SoftDeleteAsync(id);
             if (!result)
                 return NotFound(new { message = $"Usuário com ID {id} não encontrado" });
-                
+
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -190,22 +215,27 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpPatch("change-password")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> ChangePassword([FromBody] UserChangePasswordDto changePasswordDto)
+    public async Task<ActionResult> ChangePassword(
+        [FromBody] UserChangePasswordDto changePasswordDto
+    )
     {
         try
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState); 
-            
+                return BadRequest(ModelState);
+
             var result = await _userService.ChangePasswordAsync(changePasswordDto);
 
             if (!result)
@@ -227,10 +257,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpPost("authenticate")]
     [ProducesResponseType(typeof(UserResponseDto), 200)]
     [ProducesResponseType(401)]
@@ -249,10 +282,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpGet("email-exists/{email}")]
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<ActionResult<bool>> EmailExists(string email)
@@ -264,10 +300,13 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-    
+
     [HttpGet("count")]
     [ProducesResponseType(typeof(int), 200)]
     public async Task<ActionResult<int>> GetUserCount()
@@ -279,12 +318,10 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Erro interno do servidor", details = ex.Message });
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
         }
     }
-
-
-
-
-
 }

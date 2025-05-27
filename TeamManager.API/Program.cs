@@ -14,11 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAthleteRepository, AthleteRepository>();
 builder.Services.AddScoped<IFinancialTransactionRepository, FinancialTransactionRepository>();
 builder.Services.AddScoped<ICoachRepository, CoachRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Services
 builder.Services.AddScoped<IAthleteService, AthleteService>();
 builder.Services.AddScoped<IFinancialTransactionService, FinancialTransactionService>();
 builder.Services.AddScoped<ICoachService, CoachService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
