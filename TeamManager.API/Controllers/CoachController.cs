@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TeamManager.Domain.DTOs;
+using TeamManager.Domain.Exceptions;
+using TeamManager.Domain.Interfaces.Services;
 using TeamManager.Domain.Model;
 using TeamManager.Infrastructure.Data;
 
@@ -8,82 +11,125 @@ namespace TeamManager.Controllers;
 
 [ApiController]
 [Route("api/coach")]
-public class CoachController(AppDbContext context) : ControllerBase
+public class CoachController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Coach>>> GetAllCoaches()
-    {
-        IEnumerable<Coach> coaches = await context.Coaches.ToListAsync();
+    private readonly ICoachService _coachService;
 
+    public CoachController(ICoachService coachService)
+    {
+        _coachService = coachService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CoachResponseDto>>> GetAll()
+    {
+        var coaches = await _coachService.GetAllAsync();
         return Ok(coaches);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Coach>> GetCoachById(int id)
+    public async Task<ActionResult<CoachResponseDto>> GetById(int id)
     {
-        var coach = await context.Coaches.FindAsync(id);
-        if (coach == null)
-        {
-            return NotFound();
-        }
+        if (id <= 0)
+            return BadRequest("O ID do Coach deve ser maior que zero");
 
-        return coach;
+        var coach = await _coachService.GetByIdAsync(id);
+
+        if (coach == null)
+            return NotFound($"Coach com o ID {id} não foi encontrado");
+
+        return Ok(coach);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Coach>> AddCoach(Coach coach)
+    public async Task<ActionResult<CoachResponseDto>> Create([FromBody] CoachCreateDto createDto)
     {
-        context.Coaches.Add(coach);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetCoachById), new { id = coach.Id }, coach);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Coach>> UpdateCoach(int id, Coach coach)
-    {
-        if (id != coach.Id)
-        {
-            return BadRequest();
-        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         try
         {
-            context.Entry(coach).State = EntityState.Modified;
+            var createdCoach = await _coachService.CreateAsync(createDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdCoach.Id }, createdCoach);
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception e)
         {
-            if (!CoachExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return BadRequest($"Erro ao criar técnico: {e.Message}");
         }
+    }
 
-        return NoContent();
+    [HttpPut("{id}")]
+    public async Task<ActionResult<CoachResponseDto>> Update(
+        int id,
+        [FromBody] CoachUpdateDto updateDto
+    )
+    {
+        if (id <= 0)
+            return BadRequest("O ID do Coach deve ser maior que zero");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var updatedCoach = await _coachService.UpdateAsync(id, updateDto);
+            return Ok(updatedCoach);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteCoach(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        var coach = await context.Coaches.FindAsync(id);
+        if (id <= 0)
+            return BadRequest("O ID do Coach deve ser maior que zero");
 
-        if (coach == null)
+        try
         {
-            return NotFound();
+            var deleted = await _coachService.DeleteAsync(id);
+            if (deleted)
+                return NoContent();
+
+            return BadRequest("Não foi possível deletar o coach");
         }
-
-        context.Coaches.Remove(coach);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    private bool CoachExists(int id)
+    [HttpGet("role/{role}")]
+    public async Task<ActionResult<IEnumerable<CoachResponseDto>>> GetByRole(string role)
     {
-        return context.Coaches.Any(e => e.Id == id);
+        if (string.IsNullOrWhiteSpace(role))
+            return BadRequest("Função não pode estar vazia");
+
+        try
+        {
+            var coaches = await _coachService.GetByRoleAsync(role);
+            return Ok(coaches);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet("count")]
+    public async Task<ActionResult<int>> GetCountAsync()
+    {
+        var count = await _coachService.GetCountAsync();
+        return Ok(new { Count = count });
     }
 }
