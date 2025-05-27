@@ -13,9 +13,11 @@ public interface ITrainService
     Task<bool> SoftDeleteAsync(int id);
     Task<int> GetCountAsync();
     Task<IEnumerable<TrainResponseDto>> GetActiveTrainsAsync();
-    Task<IEnumerable<TrainResponseDto>> GetTrainsByDateRangeAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<TrainResponseDto>> GetTrainsByDateRangeAsync(
+        DateTime startDate,
+        DateTime endDate
+    );
     Task<IEnumerable<TrainResponseDto>> GetTrainsByTypeAsync(TypeTrain typeTrain);
     Task<IEnumerable<TrainResponseDto>> GetTrainsFromTodayAsync();
     Task<IEnumerable<TrainResponseDto>> GetUpcomingTrainsAsync();
-    
 }

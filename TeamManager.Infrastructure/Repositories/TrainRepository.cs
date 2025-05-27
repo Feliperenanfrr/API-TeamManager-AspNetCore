@@ -6,7 +6,7 @@ using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Infrastructure.Repositories;
 
-public class TrainRepository :  ITrainRepository
+public class TrainRepository : ITrainRepository
 {
     private readonly AppDbContext _context;
 
@@ -14,9 +14,7 @@ public class TrainRepository :  ITrainRepository
     {
         _context = context;
     }
-    
-    
-    
+
     public async Task<IEnumerable<Train>> GetAllAsync()
     {
         return await _context.Trains.ToListAsync();
@@ -31,11 +29,10 @@ public class TrainRepository :  ITrainRepository
     {
         train.CreatedAt = DateTime.UtcNow;
         train.IsActive = true;
-        
+
         _context.Trains.Add(train);
         await _context.SaveChangesAsync();
         return train;
-        
     }
 
     public async Task<Train> UpdateAsync(Train train)
@@ -84,24 +81,24 @@ public class TrainRepository :  ITrainRepository
 
     public async Task<IEnumerable<Train>> GetActiveTrainsAsync()
     {
-        return await _context.Trains
-            .Where(t => t.IsActive)
-            .OrderBy(t => t.Date)
-            .ToListAsync();
+        return await _context.Trains.Where(t => t.IsActive).OrderBy(t => t.Date).ToListAsync();
     }
 
-    public async Task<IEnumerable<Train>> GetTrainsByDateRangeAsync(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<Train>> GetTrainsByDateRangeAsync(
+        DateTime startDate,
+        DateTime endDate
+    )
     {
-        return await _context.Trains
-            .Where(t => t.IsActive && t.Date >= startDate && t.Date <= endDate)
+        return await _context
+            .Trains.Where(t => t.IsActive && t.Date >= startDate && t.Date <= endDate)
             .OrderBy(t => t.Date)
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Train>> GetTrainsByTypeAsync(TypeTrain typeTrain)
     {
-        return await _context.Trains
-            .Where(t => t.IsActive && t.TypeTrain == typeTrain)
+        return await _context
+            .Trains.Where(t => t.IsActive && t.TypeTrain == typeTrain)
             .OrderBy(t => t.Date)
             .ToListAsync();
     }
@@ -110,9 +107,9 @@ public class TrainRepository :  ITrainRepository
     {
         var today = DateTime.Today;
         var tomorrow = today.AddDays(1);
-        
-        return await _context.Trains
-            .Where(t => t.IsActive && t.Date >= today && t.Date < tomorrow)
+
+        return await _context
+            .Trains.Where(t => t.IsActive && t.Date >= today && t.Date < tomorrow)
             .OrderBy(t => t.Date)
             .ToListAsync();
     }
@@ -120,9 +117,9 @@ public class TrainRepository :  ITrainRepository
     public async Task<IEnumerable<Train>> GetUpcomingTrainsAsync()
     {
         var now = DateTime.Now;
-        
-        return await _context.Trains
-            .Where(t => t.IsActive && t.Date > now)
+
+        return await _context
+            .Trains.Where(t => t.IsActive && t.Date > now)
             .OrderBy(t => t.Date)
             .ToListAsync();
     }

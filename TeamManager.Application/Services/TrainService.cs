@@ -19,7 +19,7 @@ public class TrainService : ITrainService
         _trainRepository = trainRepository;
         _mapper = mapper;
     }
-    
+
     public async Task<IEnumerable<TrainResponseDto>> GetAllAsync()
     {
         var trains = await _trainRepository.GetAllAsync();
@@ -42,9 +42,9 @@ public class TrainService : ITrainService
     public async Task<TrainResponseDto?> UpdateAsync(int id, TrainUpdateDto updateDto)
     {
         var existingTrain = await _trainRepository.GetByIdAsync(id);
-        if(existingTrain == null)
+        if (existingTrain == null)
             throw new NotFoundException($"Treino com ID {id} não encontrado");
-        
+
         _mapper.Map(updateDto, existingTrain);
         var updatedTrain = await _trainRepository.UpdateAsync(existingTrain);
         return _mapper.Map<TrainResponseDto>(updatedTrain);
@@ -79,7 +79,10 @@ public class TrainService : ITrainService
         return _mapper.Map<IEnumerable<TrainResponseDto>>(trains);
     }
 
-    public async Task<IEnumerable<TrainResponseDto>> GetTrainsByDateRangeAsync(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<TrainResponseDto>> GetTrainsByDateRangeAsync(
+        DateTime startDate,
+        DateTime endDate
+    )
     {
         if (startDate > endDate)
             throw new ValidationException("Data de início deve ser anterior à data de fim");
