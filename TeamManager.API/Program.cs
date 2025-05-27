@@ -12,9 +12,11 @@ builder.Services.AddControllers();
 
 //Repositories
 builder.Services.AddScoped<IAthleteRepository, AthleteRepository>();
+builder.Services.AddScoped<IFinancialTransactionRepository, FinancialTransactionRepository>();
 
 // Services
 builder.Services.AddScoped<IAthleteService, AthleteService>();
+builder.Services.AddScoped<IFinancialTransactionService, FinancialTransactionService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));

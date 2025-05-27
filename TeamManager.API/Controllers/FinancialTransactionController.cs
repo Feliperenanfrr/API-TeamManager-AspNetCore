@@ -1,100 +1,140 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TeamManager.Domain.DTOs;
+using TeamManager.Domain.Exceptions;
+using TeamManager.Domain.Interfaces.Repoitories;
+using TeamManager.Domain.Interfaces.Services;
 using TeamManager.Domain.Model;
 using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/transaction")]
-public class FinancialTransactionController(AppDbContext context) : ControllerBase
+[Route("api/[controller]")]
+public class FinancialTransactionController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<List<FinancialTransaction>>> GetAllTransactions()
+    private readonly IFinancialTransactionService _financialTransactionService;
+
+    public FinancialTransactionController(IFinancialTransactionService financialTransactionService)
     {
-        IEnumerable<FinancialTransaction> transactions =
-            await context.FinancialTransactions.ToListAsync();
+        _financialTransactionService = financialTransactionService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<FinancialTransactionResponseDto>>> GetAll()
+    {
+        var transactions = await _financialTransactionService.GetAllAsync();
         return Ok(transactions);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<FinancialTransaction>> GetTransaction(int id)
+    public async Task<ActionResult<FinancialTransactionResponseDto>> GetById(int id)
     {
-        var transaction = await context.FinancialTransactions.FindAsync(id);
+        if (id <= 0)
+            return BadRequest("ID deve ser maior que zero");
+
+        var transaction = await _financialTransactionService.GetByIdAsync(id);
 
         if (transaction == null)
-        {
-            return NotFound();
-        }
+            return NotFound($"Transação com ID {id} não encontrado");
+
         return Ok(transaction);
     }
 
     [HttpPost]
-    public async Task<ActionResult<FinancialTransaction>> PostTransaction(
-        FinancialTransaction financialTransaction
+    public async Task<ActionResult<FinancialTransactionResponseDto>> Create(
+        [FromBody] FinancialTransactionCreateDto createDto
     )
     {
-        context.FinancialTransactions.Add(financialTransaction);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(
-            nameof(GetTransaction),
-            new { id = financialTransaction.Id },
-            financialTransaction
-        );
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Train>> PutTransaction(
-        [FromRoute] int id,
-        [FromBody] FinancialTransaction financialTransaction
-    )
-    {
-        if (id != financialTransaction.Id)
-        {
-            return BadRequest();
-        }
-
-        context.Entry(financialTransaction).State = EntityState.Modified;
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         try
         {
-            await context.SaveChangesAsync();
+            var createdTransaction = await _financialTransactionService.CreateAsync(createDto);
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = createdTransaction.Id },
+                createdTransaction
+            );
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception e)
         {
-            if (!TransactionExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return BadRequest($"Erro ao criar transação: {e.Message}");
         }
-
-        return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTransaction(int id)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<FinancialTransactionResponseDto>> Update(
+        int id,
+        [FromBody] FinancialTransactionUpdateDto updateDto
+    )
     {
-        var transaction = await context.FinancialTransactions.FindAsync(id);
+        if (id <= 0)
+            return BadRequest("ID deve ser maior que zero");
 
-        if (transaction == null)
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
         {
-            return NotFound();
+            var updatedTransaction = await _financialTransactionService.UpdateAsync(id, updateDto);
+            return Ok(updatedTransaction);
         }
-
-        context.FinancialTransactions.Remove(transaction);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    private bool TransactionExists(int id)
+    [HttpGet("type/{isIncome}")]
+    public async Task<ActionResult<IEnumerable<FinancialTransactionResponseDto>>> GetByType(
+        bool isIncome
+    )
     {
-        return context.FinancialTransactions.Any(e => e.Id == id);
+        var transactions = await _financialTransactionService.GetByTypeAsync(isIncome);
+        return Ok(transactions);
+    }
+
+    [HttpGet("date-range")]
+    public async Task<ActionResult<IEnumerable<FinancialTransactionResponseDto>>> GetByDateRange(
+        [FromQuery] DateTime startDate,
+        [FromQuery] DateTime endDate
+    )
+    {
+        if (startDate > endDate)
+            return BadRequest("Data inicial deve ser anterior à data final");
+
+        var transactions = await _financialTransactionService.GetByDateRangeAsync(
+            startDate,
+            endDate
+        );
+        return Ok(transactions);
+    }
+
+    [HttpGet("balance")]
+    public async Task<ActionResult<double>> GetBalance()
+    {
+        var balance = await _financialTransactionService.GetBalanceAsync();
+        return Ok(new { Balance = balance });
+    }
+
+    [HttpGet("income/total")]
+    public async Task<ActionResult<double>> GetTotalIncome()
+    {
+        var totalIncome = await _financialTransactionService.GetTotalIncomeAsync();
+        return Ok(new { TotalIncome = totalIncome });
+    }
+
+    [HttpGet("expenses/total")]
+    public async Task<ActionResult<double>> GetTotalExpenses()
+    {
+        var totalExpenses = await _financialTransactionService.GetTotalExpenseAsync();
+        return Ok(new { TotalExpenses = totalExpenses });
     }
 }
