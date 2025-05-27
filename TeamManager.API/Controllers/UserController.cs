@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TeamManager.Application.Services;
 using TeamManager.Domain.DTOs;
 using TeamManager.Domain.Exceptions;
-using TeamManager.Domain.Interfaces.Repoitories;
 using TeamManager.Domain.Interfaces.Services;
-using TeamManager.Domain.Model;
-using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 
@@ -54,7 +49,7 @@ public class UserController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(UserResponseDto), 200)]
-    public async Task<ActionResult<UserResponseDto>> GetUserByID(int id)
+    public async Task<ActionResult<UserResponseDto>> GetUserById(int id)
     {
         try
         {
@@ -101,7 +96,7 @@ public class UserController : ControllerBase
                 return BadRequest(ModelState);
 
             var user = await _userService.CreateAsync(createDto);
-            return CreatedAtAction(nameof(GetUserByID), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
         catch (ConflictException ex)
         {
@@ -161,6 +156,9 @@ public class UserController : ControllerBase
         try
         {
             var result = await _userService.DeleteAsync(id);
+            if (!result)
+                return NotFound(new { message = $"Usuário com ID {id} não encontrado" });
+            
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -181,6 +179,9 @@ public class UserController : ControllerBase
         try
         {
             var result = await _userService.SoftDeleteAsync(id);
+            if (!result)
+                return NotFound(new { message = $"Usuário com ID {id} não encontrado" });
+                
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -203,9 +204,13 @@ public class UserController : ControllerBase
         try
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+                return BadRequest(ModelState); 
+            
             var result = await _userService.ChangePasswordAsync(changePasswordDto);
+
+            if (!result)
+                return BadRequest(new { message = "Não foi possível alterar a senha" });
+
             return Ok(new { message = "Senha alterada com sucesso" });
         }
         catch (NotFoundException ex)
