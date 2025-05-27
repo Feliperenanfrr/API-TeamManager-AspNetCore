@@ -15,8 +15,7 @@ public class FinancialTransactionProfile : Profile
         CreateMap<FinancialTransaction, FinancialTransactionResponseDto>()
             .ForMember(
                 dest => dest.TypeTransaction,
-                opt
-                    => opt.MapFrom(src => src.TypeTransaction ? "Receita" : "Despesa")
+                opt => opt.MapFrom(src => src.TypeTransaction ? "Receita" : "Despesa")
             );
     }
 }
