@@ -58,11 +58,7 @@ O projeto implementa **Clean Architecture** com clara separação de responsabil
 ### Documentação & Testes
 - **Swagger/OpenAPI** - Documentação interativa da API
 - **xUnit** - Framework de testes unitários
-
-### Deploy & Cloud
-- **Docker** - Containerização
-- **AWS** - Infraestrutura em nuvem (preparado)
-
+  
 ---
 
 ## 🎯 Objetivos do Projeto
