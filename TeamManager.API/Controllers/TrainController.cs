@@ -1,92 +1,257 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using TeamManager.Domain.DTOs;
+using TeamManager.Domain.Enum;
+using TeamManager.Domain.Exceptions;
+using TeamManager.Domain.Interfaces.Services;
 using TeamManager.Domain.Model;
-using TeamManager.Infrastructure.Data;
 
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/train")]
-public class TrainController(AppDbContext context) : ControllerBase
+[Route("api/[controller]")]
+public class TrainController : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<List<Train>>> GetAllTrains()
-    {
-        IEnumerable<Train> trains = await context.Trains.ToListAsync();
+    private readonly ITrainService _trainService;
 
-        return Ok(trains);
+    public TrainController(ITrainService trainService)
+    {
+        _trainService = trainService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Train>> GetTrain(int id)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Train>>> GetAll()
     {
-        var train = await context.Trains.FindAsync(id);
-
-        if (train == null)
+        try
         {
-            return NotFound();
+            var trains = await _trainService.GetAllAsync();
+            return Ok(trains);
         }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
 
-        return Ok(train);
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Train>> GetById(int id)
+    {
+        try
+        {
+            var train = await _trainService.GetByIdAsync(id);
+            if (train == null)
+                return NotFound(new { message = $"Treino com ID {id} não encontrado" });
+
+            return Ok(train);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
     }
 
     [HttpPost]
-    public async Task<ActionResult<Train>> PostTrain(Train train)
+    public async Task<ActionResult<TrainResponseDto>> Create([FromBody] TrainCreateDto createDto)
     {
-        context.Trains.Add(train);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetTrain), new { id = train.Id }, train);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Train>> PutTrain([FromRoute] int id, [FromBody] Train train)
-    {
-        if (id != train.Id)
-        {
-            return BadRequest();
-        }
-
-        context.Entry(train).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!TrainExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        return NoContent();
+            var train = await _trainService.CreateAsync(createDto);
+            return CreatedAtAction(nameof(GetById), new { id = train.Id }, train);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteTrain(int id)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<TrainResponseDto>> Update(
+        [FromRoute] int id,
+        [FromBody] TrainUpdateDto updateDto
+    )
     {
-        var train = await context.Trains.FindAsync(id);
-
-        if (train == null)
+        try
         {
-            return NotFound();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (id != updateDto.Id)
+                return BadRequest(
+                    new { message = "ID da URL não coincide com ID do corpo da requisição" }
+                );
+
+            var train = await _trainService.UpdateAsync(id, updateDto);
+            return Ok(train);
         }
-
-        context.Trains.Remove(train);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        catch (NotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
     }
 
-    private bool TrainExists(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
     {
-        return context.Trains.Any(e => e.Id == id);
+        try
+        {
+            await _trainService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpPatch("{id:int}/deactivate")]
+    public async Task<ActionResult> SoftDelete(int id)
+    {
+        try
+        {
+            await _trainService.SoftDeleteAsync(id);
+            return NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpGet("count")]
+    public async Task<ActionResult<int>> GetCount()
+    {
+        try
+        {
+            var count = await _trainService.GetCountAsync();
+            return Ok(new { count });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpGet("by-date-range")]
+    public async Task<ActionResult<IEnumerable<TrainResponseDto>>> GetTrainsByDateRange(
+        [FromQuery] DateTime startDate,
+        [FromQuery] DateTime endDate
+    )
+    {
+        try
+        {
+            var trains = await _trainService.GetTrainsByDateRangeAsync(startDate, endDate);
+            return Ok(trains);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpGet("by-type/{typeTrain:int}")]
+    public async Task<ActionResult<IEnumerable<TrainResponseDto>>> GetTrainsByType(
+        TypeTrain typeTrain
+    )
+    {
+        try
+        {
+            if (!Enum.IsDefined(typeof(TypeTrain), typeTrain))
+                return BadRequest(new { message = "Tipo de treino inválido" });
+
+            var trains = await _trainService.GetTrainsByTypeAsync(typeTrain);
+            return Ok(trains);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpGet("today")]
+    public async Task<ActionResult<IEnumerable<TrainResponseDto>>> GetTrainsFromToday()
+    {
+        try
+        {
+            var trains = await _trainService.GetTrainsFromTodayAsync();
+            return Ok(trains);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
+    }
+
+    [HttpGet("upcoming")]
+    public async Task<ActionResult<IEnumerable<TrainResponseDto>>> GetUpcomingTrains()
+    {
+        try
+        {
+            var trains = await _trainService.GetUpcomingTrainsAsync();
+            return Ok(trains);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { message = "Erro interno do servidor", details = ex.Message }
+            );
+        }
     }
 }
