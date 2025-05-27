@@ -5,7 +5,7 @@ namespace TeamManager.Domain.DTOs;
 
 public record TrainCreateDto(
     [Required(ErrorMessage = "Data do treino é obrigatória")] DateTime Date,
-    [Required(ErrorMessage = "Tipo de treino é obrigatório")] TypeTrain TypeTrain,
+    [Required(ErrorMessage = "Tipo de treino é obrigatório")] TypeWorkout TypeWorkou,
     [Required(ErrorMessage = "Quantidade de atletas é obrigatória")]
     [Range(1, 100, ErrorMessage = "Quantidade de atletas deve estar entre 1 e 100")]
         int QuantityAthletes
@@ -14,7 +14,7 @@ public record TrainCreateDto(
 public record TrainUpdateDto(
     [Required(ErrorMessage = "ID é obrigatório")] int Id,
     [Required(ErrorMessage = "Data do treino é obrigatória")] DateTime Date,
-    [Required(ErrorMessage = "Tipo de treino é obrigatório")] TypeTrain TypeTrain,
+    [Required(ErrorMessage = "Tipo de treino é obrigatório")] TypeWorkout TypeWorkou,
     [Required(ErrorMessage = "Quantidade de atletas é obrigatória")]
     [Range(1, 100, ErrorMessage = "Quantidade de atletas deve estar entre 1 e 100")]
         int QuantityAthletes
@@ -23,7 +23,7 @@ public record TrainUpdateDto(
 public record TrainResponseDto(
     int Id,
     DateTime Date,
-    TypeTrain TypeTrain,
+    TypeWorkout TypeWorkou,
     string TypeTrainName,
     int QuantityAthletes,
     DateTime CreatedAt,

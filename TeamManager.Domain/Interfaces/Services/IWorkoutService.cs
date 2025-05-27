@@ -3,7 +3,7 @@ using TeamManager.Domain.Enum;
 
 namespace TeamManager.Domain.Interfaces.Services;
 
-public interface ITrainService
+public interface IWorkoutService
 {
     Task<IEnumerable<TrainResponseDto>> GetAllAsync();
     Task<TrainResponseDto?> GetByIdAsync(int id);
@@ -17,7 +17,7 @@ public interface ITrainService
         DateTime startDate,
         DateTime endDate
     );
-    Task<IEnumerable<TrainResponseDto>> GetTrainsByTypeAsync(TypeTrain typeTrain);
+    Task<IEnumerable<TrainResponseDto>> GetTrainsByTypeAsync(TypeWorkout typeWorkou);
     Task<IEnumerable<TrainResponseDto>> GetTrainsFromTodayAsync();
     Task<IEnumerable<TrainResponseDto>> GetUpcomingTrainsAsync();
 }

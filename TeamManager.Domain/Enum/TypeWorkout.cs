@@ -1,6 +1,6 @@
 ﻿namespace TeamManager.Domain.Enum;
 
-public enum TypeTrain
+public enum TypeWorkout
 {
     FLAG_TRAIN,
     FULLPAD_TRAIN,

@@ -3,10 +3,10 @@ using TeamManager.Domain.Enum;
 
 namespace TeamManager.Domain.Model;
 
-public class Train : BaseEntity
+public class Workout : BaseEntity
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
-    public TypeTrain TypeTrain { get; set; }
+    public TypeWorkout TypeWorkou { get; set; }
     public int QuantityAthletes { get; set; }
 }

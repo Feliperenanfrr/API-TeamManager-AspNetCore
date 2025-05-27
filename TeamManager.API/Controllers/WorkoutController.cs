@@ -9,22 +9,22 @@ using TeamManager.Domain.Model;
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/train")]
-public class TrainController : ControllerBase
+[Route("api/workout")]
+public class WorkoutController : ControllerBase
 {
-    private readonly ITrainService _trainService;
+    private readonly IWorkoutService _workoutService;
 
-    public TrainController(ITrainService trainService)
+    public WorkoutController(IWorkoutService workoutService)
     {
-        _trainService = trainService;
+        _workoutService = workoutService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Train>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Workout>>> GetAll()
     {
         try
         {
-            var trains = await _trainService.GetAllAsync();
+            var trains = await _workoutService.GetAllAsync();
             return Ok(trains);
         }
         catch (Exception ex)
@@ -37,11 +37,11 @@ public class TrainController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Train>> GetById(int id)
+    public async Task<ActionResult<Workout>> GetById(int id)
     {
         try
         {
-            var train = await _trainService.GetByIdAsync(id);
+            var train = await _workoutService.GetByIdAsync(id);
             if (train == null)
                 return NotFound(new { message = $"Treino com ID {id} não encontrado" });
 
@@ -64,7 +64,7 @@ public class TrainController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var train = await _trainService.CreateAsync(createDto);
+            var train = await _workoutService.CreateAsync(createDto);
             return CreatedAtAction(nameof(GetById), new { id = train.Id }, train);
         }
         catch (ValidationException ex)
@@ -96,7 +96,7 @@ public class TrainController : ControllerBase
                     new { message = "ID da URL não coincide com ID do corpo da requisição" }
                 );
 
-            var train = await _trainService.UpdateAsync(id, updateDto);
+            var train = await _workoutService.UpdateAsync(id, updateDto);
             return Ok(train);
         }
         catch (NotFoundException ex)
@@ -121,7 +121,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            await _trainService.DeleteAsync(id);
+            await _workoutService.DeleteAsync(id);
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -142,7 +142,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            await _trainService.SoftDeleteAsync(id);
+            await _workoutService.SoftDeleteAsync(id);
             return NoContent();
         }
         catch (NotFoundException ex)
@@ -163,7 +163,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            var count = await _trainService.GetCountAsync();
+            var count = await _workoutService.GetCountAsync();
             return Ok(new { count });
         }
         catch (Exception ex)
@@ -183,7 +183,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            var trains = await _trainService.GetTrainsByDateRangeAsync(startDate, endDate);
+            var trains = await _workoutService.GetTrainsByDateRangeAsync(startDate, endDate);
             return Ok(trains);
         }
         catch (ValidationException ex)
@@ -199,17 +199,17 @@ public class TrainController : ControllerBase
         }
     }
 
-    [HttpGet("by-type/{typeTrain:int}")]
+    [HttpGet("by-type/{typeWorkou:int}")]
     public async Task<ActionResult<IEnumerable<TrainResponseDto>>> GetTrainsByType(
-        TypeTrain typeTrain
+        TypeWorkout typeWorkou
     )
     {
         try
         {
-            if (!Enum.IsDefined(typeof(TypeTrain), typeTrain))
+            if (!Enum.IsDefined(typeof(TypeWorkout), typeWorkou))
                 return BadRequest(new { message = "Tipo de treino inválido" });
 
-            var trains = await _trainService.GetTrainsByTypeAsync(typeTrain);
+            var trains = await _workoutService.GetTrainsByTypeAsync(typeWorkou);
             return Ok(trains);
         }
         catch (Exception ex)
@@ -226,7 +226,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            var trains = await _trainService.GetTrainsFromTodayAsync();
+            var trains = await _workoutService.GetTrainsFromTodayAsync();
             return Ok(trains);
         }
         catch (Exception ex)
@@ -243,7 +243,7 @@ public class TrainController : ControllerBase
     {
         try
         {
-            var trains = await _trainService.GetUpcomingTrainsAsync();
+            var trains = await _workoutService.GetUpcomingTrainsAsync();
             return Ok(trains);
         }
         catch (Exception ex)
