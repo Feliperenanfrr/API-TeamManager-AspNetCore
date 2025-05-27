@@ -1,8 +1,9 @@
-﻿using TeamManager.Domain.Enum;
+﻿using TeamManager.Domain.Common;
+using TeamManager.Domain.Enum;
 
 namespace TeamManager.Domain.Model;
 
-public class Train
+public class Train : BaseEntity
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
