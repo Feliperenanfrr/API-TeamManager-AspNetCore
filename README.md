@@ -58,11 +58,7 @@ O projeto implementa **Clean Architecture** com clara separação de responsabil
 ### Documentação & Testes
 - **Swagger/OpenAPI** - Documentação interativa da API
 - **xUnit** - Framework de testes unitários
-
-### Deploy & Cloud
-- **Docker** - Containerização
-- **AWS** - Infraestrutura em nuvem (preparado)
-
+  
 ---
 
 ## 🎯 Objetivos do Projeto
@@ -94,11 +90,8 @@ O projeto implementa **Clean Architecture** com clara separação de responsabil
 
 ## 📞 Contato
 
-**Felipe Renan** - Desenvolvedor Full Stack
+**Felipe Renan** - Desenvolvedor Backend
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/felipe-renan/)
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:felipeferreira3146@gmail.com)
 
----
-
-⭐ **Se este projeto foi útil para você, considere dar uma estrela!** ⭐
