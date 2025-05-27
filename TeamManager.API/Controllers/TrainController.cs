@@ -9,7 +9,7 @@ using TeamManager.Domain.Model;
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/train")]
 public class TrainController : ControllerBase
 {
     private readonly ITrainService _trainService;

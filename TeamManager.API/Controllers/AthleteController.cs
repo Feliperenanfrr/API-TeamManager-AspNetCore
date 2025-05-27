@@ -12,7 +12,7 @@ using TeamManager.Infrastructure.Data;
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/athlete")]
 [Produces("application/json")]
 public class AthleteController : ControllerBase
 {

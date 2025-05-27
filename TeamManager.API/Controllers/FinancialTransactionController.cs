@@ -11,7 +11,7 @@ using TeamManager.Infrastructure.Data;
 namespace TeamManager.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/financialtransaction")]
 public class FinancialTransactionController : ControllerBase
 {
     private readonly IFinancialTransactionService _financialTransactionService;
