@@ -1,6 +1,8 @@
-﻿namespace TeamManager.Domain.Model;
+﻿using TeamManager.Domain.Common;
 
-public class User
+namespace TeamManager.Domain.Model;
+
+public class User : BaseEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = "Sem Nome";
